@@ -1,6 +1,6 @@
  function Home() { 
 
-    return <h1>Absolutamente nada dura para sempre!</h1>
+    return <h1>Se você não sabe tocar piano, da uma risadinha!</h1>
  }
 
  export default Home;
