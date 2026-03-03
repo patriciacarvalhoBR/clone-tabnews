@@ -4,10 +4,14 @@ const { Pool } = pg;
 const globalForPg = globalThis;
 
 if (!globalForPg.__pgPool) {
+  if (!process.env.DATABASE_URL) {
+    throw new Error("Missing env var: DATABASE_URL");
+  }
+
   globalForPg.__pgPool = new Pool({
     connectionString: process.env.DATABASE_URL,
 
-    // Força criptografia (resolve "no encryption")
+    // Aiven exige TLS. Na Vercel, force SSL:
     ssl:
       process.env.NODE_ENV === "production"
         ? { rejectUnauthorized: false }
