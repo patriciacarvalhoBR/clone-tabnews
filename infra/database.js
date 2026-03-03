@@ -1,3 +1,4 @@
+// infra/database.js
 import pg from "pg";
 const { Pool } = pg;
 
@@ -11,16 +12,19 @@ if (!globalForPg.__pgPool) {
   globalForPg.__pgPool = new Pool({
     connectionString: process.env.DATABASE_URL,
 
-    // Aiven exige TLS. Na Vercel, force SSL:
-    ssl:
-      process.env.NODE_ENV === "production"
-        ? { rejectUnauthorized: false }
-        : false,
+    // FORÇA TLS SEMPRE (resolve "no encryption" no Aiven)
+    ssl: { rejectUnauthorized: false },
 
     max: 10,
     idleTimeoutMillis: 30_000,
     connectionTimeoutMillis: 10_000,
   });
+
+  // (opcional) pra você confirmar no log da Vercel
+  console.log(
+    "DB pool created. SSL enabled:",
+    !!globalForPg.__pgPool.options.ssl,
+  );
 }
 
 export async function query(text, params) {
